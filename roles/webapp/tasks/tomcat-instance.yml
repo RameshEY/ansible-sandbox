@@ -1,0 +1,41 @@
+---
+
+  - name: create tomcat instance
+    file:
+      name={{item}}
+      state=directory
+      owner={{tomcat_user}}
+      group={{tomcat_group}}
+    with_items:
+      - "{{app_dir}}"
+      - "{{app_dir}}/conf"
+      - "{{app_dir}}/logs"
+      - "{{app_dir}}/webapps"
+      - "{{app_dir}}/work"
+      - "{{app_dir}}/temp"
+
+
+  - name: setup conf for tomcat instance (catalina.policy)
+    template:
+      src=tomcat-conf/{{item}}
+      dest={{app_dir}}/conf/{{item}}
+      owner={{tomcat_user}}
+      group={{tomcat_group}}
+    with_items:
+      - catalina.policy
+      - catalina.properties
+      - context.xml
+      - logging.properties
+      - server.xml
+      - tomcat-users.xml
+      - web.xml
+
+
+  - name: install tomcat init script
+    template:
+      src=tomcat.sh
+      dest=/etc/init.d/tomcat-{{target_instance_name}}
+      mode=0755
+    notify:
+      - register tomcat init script (add)
+      - register tomcat init script (level)

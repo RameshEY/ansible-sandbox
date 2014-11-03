@@ -1,0 +1,12 @@
+---
+
+  - name: register tomcat init script (add)
+    shell: chkconfig --add tomcat-{{target_instance_name}}
+
+  - name: register tomcat init script (level)
+    shell: chkconfig --level 345 tomcat-{{target_instance_name}} on
+
+  - name: restart tomcat
+    service:
+      name=tomcat-{{target_instance_name}}
+      state=restarted
